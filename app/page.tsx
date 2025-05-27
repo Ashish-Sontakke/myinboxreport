@@ -9,8 +9,6 @@ import {
   ArrowRight,
   CheckCircle,
 } from "lucide-react";
-import Image from "next/image";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
