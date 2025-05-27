@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, AlertCircle, RefreshCw, Home, Mail } from "lucide-react";
+import { AlertCircle, RefreshCw, Home, Mail } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";

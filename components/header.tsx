@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { buttonVariants } from "./ui/button";
 
 export default function Header() {
   return (

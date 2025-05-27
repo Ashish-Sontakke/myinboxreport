@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, Shield, Lock, Eye } from "lucide-react";
+import { Shield, Lock, Eye } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
+
 export default function SignInPage() {
   const handleGoogleSignIn = () => {
     signIn("google", {
