@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Comic_Neue } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
-const font = Comic_Neue({
+const font = Manrope({
   subsets: ["latin"],
-  variable: "--font-comic-neue",
-  weight: ["300", "400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -21,7 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${font.className} antialiased`}>{children}</body>
+      <body className={`${font.className} antialiased`}>
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
