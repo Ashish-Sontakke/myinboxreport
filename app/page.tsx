@@ -245,9 +245,9 @@ export default function Home() {
               Your Privacy is <span className="gradient-text">Sacred</span>
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              We never store your email data on our servers. Processing happens
+              {`We never store your email data on our servers. Processing happens
               via secure cloud APIs that don't retain your information, and
-              analytics are stored locally in your browser.
+              analytics are stored locally in your browser.`}
             </p>
             <div className="flex flex-wrap justify-center gap-6">
               {[
