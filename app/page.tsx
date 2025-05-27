@@ -9,8 +9,12 @@ import {
   ArrowRight,
   CheckCircle,
 } from "lucide-react";
+import Image from "next/image";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
     animate: { opacity: 1, y: 0 },
@@ -77,15 +81,9 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen overflow-hidden">
-      {/* Background Elements */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-blob"></div>
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-accent/30 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-chart-1/20 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
-      </div>
+    <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6">
+      <section className="relative flex items-center justify-center px-6 py-12">
         <div className="max-w-6xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -109,7 +107,10 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mb-16"
           >
-            <button className="gradient-border glow-effect group">
+            <button
+              onClick={() => router.push("/auth/sign-in")}
+              className="gradient-border glow-effect group"
+            >
               <div className="px-8 py-4 flex items-center gap-3 text-lg font-semibold">
                 Get Started Free
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -265,6 +266,62 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Open Source Section */}
+      <section className="py-24 px-6 bg-muted/30">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Built in the <span className="gradient-text">Open</span>
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              This project is completely open source. Explore the code,
+              contribute features, or fork it for your own use. Transparency and
+              community-driven development.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+              <a
+                href="https://github.com/Ashish-Sontakke/myinboxreport"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-background border border-border hover:border-primary/50 rounded-lg px-6 py-3 transition-all duration-200 group"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="font-medium">View on GitHub</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-2">Created by</p>
+              <a
+                href="https://x.com/zeroAsh_"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-foreground hover:text-primary transition-colors group"
+              >
+                <span className="font-medium">@zeroAsh_</span>
+              </a>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -279,9 +336,13 @@ export default function Home() {
               <span className="gradient-text">Inbox Insights</span>?
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Start analyzing your Gmail today.
+              Start analyzing your Gmail today. No signup required, completely
+              free, and we never store your email data.
             </p>
-            <button className="gradient-border glow-effect group text-lg">
+            <button
+              onClick={() => router.push("/auth/sign-in")}
+              className="gradient-border glow-effect group text-lg"
+            >
               <div className="px-10 py-5 flex items-center gap-3 font-semibold">
                 Connect Gmail & Start Analyzing
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -290,6 +351,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
