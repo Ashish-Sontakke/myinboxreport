@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Work_Sans as Font } from "next/font/google";
+import { Be_Vietnam_Pro as Font } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { siteConfig } from "@/config";
 const font = Font({
   subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
 });
 
 export const metadata: Metadata = {
