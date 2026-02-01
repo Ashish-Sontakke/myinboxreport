@@ -51,8 +51,9 @@ Requires: [Bun](https://bun.sh/) and Node 20+
 - **Performance-conscious**: Target mid-range laptops; avoid heavy dependencies.
 - **Agent-ready tasks**: The ROADMAP.md contains numbered, self-contained tasks with clear inputs, outputs, files, and acceptance criteria for autonomous AI agent execution.
 
-## PR Guidelines
+## Commit & PR Guidelines
 
+- **Always run `bun run build` before committing.** Do not commit code that fails the production build. This is non-negotiable.
 - Run `bun lint` before pushing
 - Include screenshots for UI changes
 - Note privacy implications when touching Gmail, storage, or LLM integrations
