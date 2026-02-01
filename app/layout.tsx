@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro as Font } from "next/font/google";
+import { Poppins as Font } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { AuthProvider } from "@/contexts/auth-context";
 import { siteConfig } from "@/config";
+
 const font = Font({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+  weight: ["400", "500", "600", "700", "800", "900"]
 });
 
 export const metadata: Metadata = {
@@ -47,11 +47,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
