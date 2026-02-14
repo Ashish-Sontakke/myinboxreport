@@ -77,14 +77,13 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
                   <Image src={logo} alt="Logo" className="size-5" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-left text-base leading-wide">
                   <span className="truncate font-semibold">
                     {siteConfig.name}
                   </span>
-                  <span className="truncate text-xs">Analytics</span>
                 </div>
               </Link>
             </SidebarMenuButton>

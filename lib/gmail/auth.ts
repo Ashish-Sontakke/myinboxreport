@@ -2,12 +2,21 @@
  * Google Identity Services (GIS) implicit grant flow.
  *
  * Uses the GIS client library to obtain a short-lived access_token
- * without a backend or client_secret. Tokens live in memory only
- * and expire after ~1 hour.
+ * without a backend or client_secret. Tokens are persisted in
+ * sessionStorage so they survive page reloads but clear when the
+ * tab/browser closes. Tokens expire after ~1 hour.
  */
 
-const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+const SCOPES = [
+  'https://www.googleapis.com/auth/gmail.readonly',
+  'openid',
+  'email',
+  'profile',
+].join(' ');
 const GIS_SCRIPT_URL = 'https://accounts.google.com/gsi/client';
+
+const TOKEN_KEY = 'myinboxreport_token';
+const TOKEN_EXPIRY_KEY = 'myinboxreport_token_expiry';
 
 interface TokenResponse {
   access_token: string;
@@ -18,7 +27,7 @@ interface TokenResponse {
   error_description?: string;
 }
 
-// In-memory token store (intentionally not persisted)
+// In-memory token store, hydrated from sessionStorage on load
 let accessToken: string | null = null;
 let tokenExpiresAt: number = 0;
 let tokenClient: google.accounts.oauth2.TokenClient | null = null;
@@ -26,6 +35,44 @@ let tokenClient: google.accounts.oauth2.TokenClient | null = null;
 // Pending sign-in promise handlers
 let pendingResolve: ((token: TokenResponse) => void) | null = null;
 let pendingReject: ((error: Error) => void) | null = null;
+
+function persistToken(token: string, expiresAt: number): void {
+  accessToken = token;
+  tokenExpiresAt = expiresAt;
+  try {
+    sessionStorage.setItem(TOKEN_KEY, token);
+    sessionStorage.setItem(TOKEN_EXPIRY_KEY, String(expiresAt));
+  } catch { /* sessionStorage unavailable — memory-only fallback */ }
+}
+
+function clearPersistedToken(): void {
+  accessToken = null;
+  tokenExpiresAt = 0;
+  try {
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TOKEN_EXPIRY_KEY);
+  } catch { /* ignore */ }
+}
+
+function restoreToken(): void {
+  try {
+    const token = sessionStorage.getItem(TOKEN_KEY);
+    const expiry = sessionStorage.getItem(TOKEN_EXPIRY_KEY);
+    if (token && expiry) {
+      const expiresAt = Number(expiry);
+      // Only restore if not expired (with 60s buffer)
+      if (Date.now() < expiresAt - 60_000) {
+        accessToken = token;
+        tokenExpiresAt = expiresAt;
+      } else {
+        clearPersistedToken();
+      }
+    }
+  } catch { /* ignore */ }
+}
+
+// Restore on module load
+restoreToken();
 
 /**
  * Dynamically load the GIS script and initialize the token client.
@@ -60,8 +107,8 @@ export async function initGoogleAuth(): Promise<void> {
         return;
       }
 
-      accessToken = response.access_token;
-      tokenExpiresAt = Date.now() + response.expires_in * 1000;
+      const expiresAt = Date.now() + response.expires_in * 1000;
+      persistToken(response.access_token, expiresAt);
       pendingResolve?.(response);
       pendingResolve = null;
       pendingReject = null;
@@ -93,8 +140,7 @@ export function signOut(): void {
       // Revocation callback — no-op, we clear state regardless
     });
   }
-  accessToken = null;
-  tokenExpiresAt = 0;
+  clearPersistedToken();
 }
 
 /**
