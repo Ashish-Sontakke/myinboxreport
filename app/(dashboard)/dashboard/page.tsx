@@ -1,20 +1,29 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { siteConfig } from "@/config";
-
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh py-12 px-4 text-center">
-      <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-        Coming Soon!
-      </h1>
-      <p className="mt-4 text-lg text-muted-foreground">
-        The app is still under development. We'll notify you once it's ready.
+    <div>
+      <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
+      <p className="mt-1 text-muted-foreground">
+        Your inbox analytics at a glance.
       </p>
-      <div className="mt-6">
-        <Button asChild>
-          <Link href="/">Back to Home</Link>
-        </Button>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {["Total Emails", "Subscriptions", "Monthly Spend", "Monthly Income"].map(
+          (label) => (
+            <div
+              key={label}
+              className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm"
+            >
+              <p className="text-sm font-medium text-muted-foreground">
+                {label}
+              </p>
+              <p className="mt-2 text-3xl font-bold">0</p>
+            </div>
+          )
+        )}
+      </div>
+
+      <div className="mt-8 rounded-lg border bg-card p-6 text-center text-muted-foreground">
+        <p>Sync your Gmail to start seeing insights here.</p>
       </div>
     </div>
   );

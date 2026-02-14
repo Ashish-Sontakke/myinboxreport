@@ -16,9 +16,27 @@ import {
   CreditCard,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config";
+import { useAuth } from "@/contexts/auth-context";
+
 export default function Home() {
+  const { isAuthenticated, signIn } = useAuth();
+  const router = useRouter();
+
+  const handleConnectGmail = async () => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+      return;
+    }
+    try {
+      await signIn();
+      router.push("/dashboard");
+    } catch {
+      // User cancelled or GIS not ready — stay on page
+    }
+  };
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -44,11 +62,9 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full justify-center pt-4">
-              <Button size="lg" asChild>
-                <Link href="/dashboard">
-                  <Mail className="mr-2 h-5 w-5" />
-                  Connect Gmail & Start
-                </Link>
+              <Button size="lg" onClick={handleConnectGmail}>
+                <Mail className="mr-2 h-5 w-5" />
+                {isAuthenticated ? "Go to Dashboard" : "Connect Gmail & Start"}
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <Link href={siteConfig.links.github} target="_blank">
@@ -605,10 +621,9 @@ export default function Home() {
               you find.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
-                <Link href={"/dashboard"}>
-                  Connect Gmail Now <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+              <Button size="lg" onClick={handleConnectGmail}>
+                {isAuthenticated ? "Go to Dashboard" : "Connect Gmail Now"}{" "}
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="secondary" asChild>
                 <Link href={siteConfig.links.github}>Star on GitHub</Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import logo from "@/public/logo.svg";
 import {
@@ -13,8 +14,25 @@ import {
 import React from "react";
 import { cn } from "@/lib/utils";
 import { siteConfig } from "@/config";
+import { useAuth } from "@/contexts/auth-context";
 import Image from "next/image";
 export function Header() {
+  const { isAuthenticated, signIn } = useAuth();
+  const router = useRouter();
+
+  const handleGoToApp = async () => {
+    if (isAuthenticated) {
+      router.push("/dashboard");
+      return;
+    }
+    try {
+      await signIn();
+      router.push("/dashboard");
+    } catch {
+      // User cancelled sign-in
+    }
+  };
+
   return (
     <header className="sticky top-0 bg-background z-50 w-full ">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -46,8 +64,8 @@ export function Header() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Button className="hidden sm:flex" asChild>
-            <Link href="/dashboard">Go to App</Link>
+          <Button className="hidden sm:flex" onClick={handleGoToApp}>
+            {isAuthenticated ? "Dashboard" : "Go to App"}
           </Button>
         </div>
       </div>
