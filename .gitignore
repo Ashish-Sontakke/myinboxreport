@@ -34,3 +34,6 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# sqlite-wasm assets copied by scripts/copy-sqlite.mjs
+/public/sqlite/
