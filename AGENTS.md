@@ -36,6 +36,22 @@ bun run build  # production build (static export to out/)
 7. **No backend, ever.** No API routes, no server components that fetch. If a feature needs a server, the feature is wrong.
 8. **Observability is a feature**: structured in-app activity log; extraction failures are recorded per-item, visible, and retryable — never silently swallowed.
 
+## Implementation notes (hard-won — do not re-learn these)
+
+- **sqlite-wasm cannot be bundled by Turbopack.** The worker (`lib/db/sqlite-worker.ts`) loads the self-contained build from `/public/sqlite/` (copied by `scripts/copy-sqlite.mjs` via predev/prebuild) through a bundler-invisible dynamic import (`new Function("u","return import(u)")`). Don't import `@sqlite.org/sqlite-wasm` directly anywhere.
+- **OPFS sahpool is single-tab** (second tab gets a friendly error from DbProvider) and **does not work in incognito/ephemeral Chromium profiles** — writes intermittently return a wrapped `FILE_ERROR_NO_SPACE` errno. Pool capacity is set to 4 (default 6) since we open exactly one DB.
+- **GIS silent token refresh (`prompt:''`) only works inside a user gesture** — popups are blocked on page load. `ensureToken()` in auth-context is the only correct entry point (single-flight).
+- All `date` columns are **unix epoch milliseconds**; the agent instructions spell out the strftime pattern because local models get this wrong otherwise.
+- Headless verification harness: `scratchpad verify-*.mjs` scripts (playwright-core + persistent profile against the static export). Playwright's default ephemeral context will falsely fail OPFS writes — always use `launchPersistentContext`.
+- The new React compiler lint (`react-hooks/set-state-in-effect`) flags async data-load effects; those carry documented `eslint-disable-next-line` comments. Don't blanket-disable the rule.
+
+## Next up (owner feedback, 2026-07-02)
+
+- **Background sync**: initial sync currently blocks the first-run screen; it should continue in the background while the user starts chatting/onboarding.
+- **Extraction as dispatched tasks / subagents**: extraction runs as one opaque loop today. Direction: dispatch per-concern extraction as visible tasks (what is being extracted, for which table, why) — likely per-spec workers with their own progress, and possibly a subagent that can refine specs from failures.
+- **Async feel**: sync/extraction/chat currently feel too synchronous; decouple long operations from the UI thread of interaction.
+- BYO-key cloud models via `@ai-sdk/openai-compatible` (planned; settings type already accommodates it).
+
 ## Design system
 
 shadcn/ui with preset `b1oVyCNk` — style **base-sera**, neutral palette, Geist / Geist Mono fonts.
