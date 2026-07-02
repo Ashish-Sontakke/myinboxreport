@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   EyeIcon,
@@ -10,7 +11,13 @@ import {
 import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { ChatShell } from "@/components/chat/chat-shell"
 import { useAuth } from "@/contexts/auth-context"
+import { AIStatusProvider } from "@/contexts/ai-status-context"
+import { DbProvider } from "@/contexts/db-context"
+import { ExtractionProvider } from "@/contexts/extraction-context"
+import { SyncProvider } from "@/contexts/sync-context"
+import { getDb } from "@/lib/db/client"
 
 function SignInScreen() {
   const { signIn, isLoading } = useAuth()
@@ -58,8 +65,25 @@ function SignInScreen() {
   )
 }
 
+function AppShell() {
+  // Transparency: expose the database handle for power users / debugging.
+  useEffect(() => {
+    ;(window as unknown as Record<string, unknown>).__mirDb = getDb
+  }, [])
+
+  return (
+    <AIStatusProvider>
+      <SyncProvider>
+        <ExtractionProvider>
+          <ChatShell />
+        </ExtractionProvider>
+      </SyncProvider>
+    </AIStatusProvider>
+  )
+}
+
 export default function AppPage() {
-  const { isAuthenticated, isLoading, user, signOut } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
     return (
@@ -74,15 +98,8 @@ export default function AppPage() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-4 px-4 text-center">
-      <Logo className="size-8 text-primary" />
-      <p className="text-muted-foreground">
-        Signed in as <span className="text-foreground">{user?.email}</span>.
-        The agent chat is coming next.
-      </p>
-      <Button variant="outline" size="sm" onClick={signOut}>
-        Sign out
-      </Button>
-    </div>
+    <DbProvider>
+      <AppShell />
+    </DbProvider>
   )
 }
