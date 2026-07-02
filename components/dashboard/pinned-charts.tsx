@@ -25,7 +25,7 @@ interface Pin {
   error?: string
 }
 
-export function PinnedCharts() {
+export function PinnedCharts({ onAskAgent }: { onAskAgent?: () => void }) {
   const db = useDb()
   const [pins, setPins] = useState<Pin[] | null>(null)
 
@@ -85,10 +85,15 @@ export function PinnedCharts() {
             </EmptyMedia>
             <EmptyTitle>Nothing pinned yet</EmptyTitle>
             <EmptyDescription>
-              Ask for a chart in the chat, then pin it — it will live here and
+              The dashboard is made of charts you pin from the chat — they
               refresh from your data every time you open this tab.
             </EmptyDescription>
           </EmptyHeader>
+          {onAskAgent && (
+            <Button variant="outline" size="sm" onClick={onAskAgent}>
+              Ask the agent to build a starter dashboard
+            </Button>
+          )}
         </Empty>
       </div>
     )

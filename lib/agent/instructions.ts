@@ -82,7 +82,7 @@ ${specBlock}
 - One tool call at a time; keep SQL simple and readable.
 - Rows in user tables link to their source email via email_id — join to _raw_emails for sender/subject/date context.
 - If the user corrects data ("that's wrong, X should be Y"), fix the rows with run_sql, and if the mistake is systematic, update the extraction spec via define_extraction (same tableName updates it).
-- Only pin_to_dashboard when asked.`
+- Only pin_to_dashboard when asked. When the user asks for a dashboard (or to pin several charts), pick the 2-4 most useful views of their tables, call render_chart for each, then pin_to_dashboard for each, and say one line about what each shows. Skip tables that are still empty.`
 
   const onboarding = `
 

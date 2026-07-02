@@ -66,7 +66,13 @@ function Welcome({
   )
 }
 
-export function Chat() {
+export function Chat({
+  pendingPrompt,
+  onPromptConsumed,
+}: {
+  pendingPrompt?: string | null
+  onPromptConsumed?: () => void
+}) {
   const db = useDb()
   const { status: aiStatusValue } = useAIStatus()
   const { specCount } = useExtraction()
@@ -99,6 +105,8 @@ export function Chat() {
       initialMessages={initialMessages}
       onboarding={specCount === 0}
       aiConnected={aiStatusValue === "connected"}
+      pendingPrompt={pendingPrompt}
+      onPromptConsumed={onPromptConsumed}
     />
   )
 }
@@ -108,11 +116,15 @@ function ChatInner({
   initialMessages,
   onboarding,
   aiConnected,
+  pendingPrompt,
+  onPromptConsumed,
 }: {
   transport: LazyAgentTransport
   initialMessages: AppUIMessage[]
   onboarding: boolean
   aiConnected: boolean
+  pendingPrompt?: string | null
+  onPromptConsumed?: () => void
 }) {
   const db = useDb()
   const { reloadCounts } = useExtraction()
@@ -140,6 +152,17 @@ function ChatInner({
   const send = (text: string) => {
     void sendMessage({ text })
   }
+
+  // A prompt handed over from another tab (e.g. the dashboard's
+  // "build a starter dashboard" button) — send it once when ready.
+  const pendingSentRef = useRef(false)
+  useEffect(() => {
+    if (!pendingPrompt || !aiConnected || pendingSentRef.current) return
+    pendingSentRef.current = true
+    send(pendingPrompt)
+    onPromptConsumed?.()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingPrompt, aiConnected])
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

@@ -24,8 +24,16 @@ export function ChatShell() {
   const { emailCount } = useSync()
   const [tab, setTab] = useState<Tab>("chat")
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [pendingPrompt, setPendingPrompt] = useState<string | null>(null)
 
   const firstRun = emailCount === 0
+
+  const askAgentForDashboard = () => {
+    setPendingPrompt(
+      "Look at my tracked tables and build me a starter dashboard: create and pin 2-4 charts that best summarize the data. Briefly explain what each one shows.",
+    )
+    setTab("chat")
+  }
 
   return (
     <div className="flex h-svh flex-col">
@@ -73,9 +81,12 @@ export function ChatShell() {
         {firstRun ? (
           <SyncGate />
         ) : tab === "chat" ? (
-          <Chat />
+          <Chat
+            pendingPrompt={pendingPrompt}
+            onPromptConsumed={() => setPendingPrompt(null)}
+          />
         ) : tab === "dashboard" ? (
-          <PinnedCharts />
+          <PinnedCharts onAskAgent={askAgentForDashboard} />
         ) : (
           <DataOverview />
         )}
